@@ -2,6 +2,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net"
@@ -46,5 +47,19 @@ func (s *Server) Start() error {
 	if err := s.server.ListenAndServe(); err != nil {
 		return fmt.Errorf("error starting server: %w", err)
 	}
+	return nil
+}
+
+// Stop the server gracefully within the timeout.
+func (s *Server) Stop() error {
+	fmt.Println("Stopping...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := s.server.Shutdown(ctx); err != nil {
+		return fmt.Errorf("error stopping server: %w", err)
+	}
+
 	return nil
 }
