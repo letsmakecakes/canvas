@@ -2,6 +2,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net"
 	"net/http"
@@ -35,4 +36,15 @@ func New(opts Options) *Server {
 			IdleTimeout:       5 * time.Second,
 		},
 	}
+}
+
+// Start the server by setting up routes and listening for HTTP requests on the given address.
+func (s *Server) Start() error {
+	s.setupRoutes()
+
+	fmt.Println("Starting on", s.address)
+	if err := s.server.ListenAndServe(); err != nil {
+		return fmt.Errorf("error starting server: %w", err)
+	}
+	return nil
 }
